@@ -10,14 +10,18 @@
     "db:generate": "prisma generate"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.83",
+    "@ai-sdk/openai": "^3.0.74",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.22.0",
+    "ai": "^6.0.208",
     "dotenv": "^17.4.2",
     "next": "16.2.9",
     "pg": "^8.22.0",
     "prisma": "^5.22.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

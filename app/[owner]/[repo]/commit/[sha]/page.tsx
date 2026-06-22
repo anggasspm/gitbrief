@@ -5,9 +5,7 @@ import { notFound, useParams } from 'next/navigation'
 import { ExplainCard } from '@/components/ExplainCard'
 import { DiffViewer }  from '@/components/DiffViewer'
 import { BackButton }  from '@/components/BackButton'
-import { LanguageToggle } from '@/components/LanguageToggle'
-import { IconGitCommit, IconExternalLink } from '@/components/Icons'
-import { useLang } from '@/lib/i18n-context'
+import { IconExternalLink } from '@/components/Icons'
 
 interface CommitExplanationData {
   summary: string; why: string; impact: string[]
@@ -20,7 +18,6 @@ interface CommitExplanationData {
 export default function CommitPage() {
   const params = useParams<{ owner: string; repo: string; sha: string }>()
   const { owner, repo, sha } = params
-  const { lang, t } = useLang()
 
   const [data, setData] = useState<CommitExplanationData | null>(null)
   const [error, setError] = useState(false)
@@ -35,7 +32,7 @@ export default function CommitPage() {
     fetch('/api/explain/commit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: `https://github.com/${owner}/${repo}/commit/${sha}`, lang }),
+      body: JSON.stringify({ url: `https://github.com/${owner}/${repo}/commit/${sha}` }),
     })
       .then(res => res.json())
       .then(json => {
@@ -47,16 +44,15 @@ export default function CommitPage() {
       .finally(() => { if (!cancelled) setLoading(false) })
 
     return () => { cancelled = true }
-  }, [owner, repo, sha, lang])
+  }, [owner, repo, sha])
 
   if (error) notFound()
 
   return (
     <main className="min-h-screen">
-      <nav className="border-b border-zinc-800/50 px-6 py-4 backdrop-blur-sm sticky top-0 z-10 bg-zinc-950/80">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-2 text-sm flex-wrap">
+      <nav className="glass-nav border-b border-white/5 px-6 py-4 sticky top-0 z-10">
+        <div className="max-w-3xl mx-auto flex items-center gap-2 text-sm flex-wrap">
           <BackButton />
-          <LanguageToggle />
         </div>
       </nav>
 
@@ -64,21 +60,21 @@ export default function CommitPage() {
         <div className="flex items-start justify-between gap-4 mb-8">
           <div>
             <h1 className="text-lg font-semibold text-zinc-100 mb-1 font-mono">{sha.slice(0, 7)}</h1>
-            <p className="text-sm text-zinc-500">{t('commitExplanation')}</p>
+            <p className="text-sm text-zinc-500">Commit explanation</p>
           </div>
           <a
             href={`https://github.com/${owner}/${repo}/commit/${sha}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors border border-zinc-700 rounded-lg px-3 py-2 font-mono whitespace-nowrap"
+            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
           >
             <IconExternalLink className="w-3 h-3" />
-            {t('viewOnGithub')}
+            View on GitHub
           </a>
         </div>
 
         {loading && (
-          <p className="text-zinc-600 text-sm font-mono py-10 text-center">{t('generating')}</p>
+          <p className="text-zinc-600 text-sm font-mono py-10 text-center">Analyzing changes…</p>
         )}
 
         {data && !loading && (
@@ -93,7 +89,7 @@ export default function CommitPage() {
 
             <div className="mt-8">
               <h2 className="text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
-                {t('diff')}
+                Diff
               </h2>
               <DiffViewer rawDiff={data.rawDiff} />
             </div>

@@ -149,3 +149,11 @@ export function IconGitMerge({ className }: { className?: string }) {
     </svg>
   )
 }
+
+export function IconArrowLeft({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M16 10H4M9 5l-5 5 5 5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}

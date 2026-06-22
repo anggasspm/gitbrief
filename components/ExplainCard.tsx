@@ -28,7 +28,7 @@ export function ExplainCard(p: Props) {
         <RiskBadge risk={p.risk} />
         <BreakingBadge breaking={p.breaking} />
         {p.cached && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border text-zinc-500 border-zinc-700/60">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs glass-pill text-zinc-500">
             Cached
           </span>
         )}
@@ -60,7 +60,7 @@ export function ExplainCard(p: Props) {
             <span className="text-zinc-500">Score</span>
             <span className="font-mono text-zinc-300 tabular-nums">{p.riskScore} / 100</span>
           </div>
-          <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full ${riskBarColor(p.riskScore)}`}
               style={{ width: `${p.riskScore}%` }}
@@ -86,7 +86,7 @@ export function ExplainCard(p: Props) {
       </CardRow>
 
       <CardRow icon={<IconFileText className="w-4 h-4" />} title="Changelog Entry">
-        <div className="font-mono text-sm bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-300">
+        <div className="font-mono text-sm bg-black/30 border border-white/5 rounded-lg px-4 py-3 text-zinc-300">
           {p.changelog}
         </div>
       </CardRow>
@@ -99,9 +99,11 @@ function CardRow({
 }: {
   icon: React.ReactNode; title: string; children: React.ReactNode; accent?: string
 }) {
-  const border = accent === 'red' ? 'border-red-900/40' : 'border-zinc-800/60'
   return (
-    <div className={`bg-zinc-900/40 border ${border} rounded-xl p-5 space-y-3 mb-3`}>
+    <div
+      className="glass-panel rounded-2xl p-5 space-y-3 mb-3"
+      style={accent === 'red' ? { borderColor: 'rgba(248,113,113,0.35)' } : undefined}
+    >
       <h3 className="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-widest">
         <span className="text-zinc-600">{icon}</span>
         {title}

@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useLang } from '@/lib/i18n-context'
-import { LanguageToggle } from './LanguageToggle'
-import { IconGitCommit, IconGitPullRequest, IconGitMerge, IconStar, IconExternalLink, IconChevronRight } from './Icons'
+import {
+  IconGitCommit, IconGitPullRequest, IconGitMerge,
+  IconStar, IconExternalLink, IconChevronRight, IconArrowLeft,
+} from './Icons'
 import type { RepoCommit, RepoPR } from '@/lib/github'
 
 function timeAgo(dateStr: string) {
@@ -28,15 +29,14 @@ interface Props {
 }
 
 export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
-  const { t } = useLang()
   const [tab, setTab] = useState<Tab>('all')
   const merged = prs.filter(p => p.merged)
 
   const tabs: { id: Tab; label: string; count: number }[] = [
-    { id: 'all',     label: t('tabAll'),     count: commits.length + prs.length },
-    { id: 'commits', label: t('tabCommits'), count: commits.length },
-    { id: 'prs',     label: t('tabPrs'),     count: prs.length },
-    { id: 'merges',  label: t('tabMerges'),  count: merged.length },
+    { id: 'all',     label: 'All',     count: commits.length + prs.length },
+    { id: 'commits', label: 'Commits', count: commits.length },
+    { id: 'prs',     label: 'PRs',     count: prs.length },
+    { id: 'merges',  label: 'Merges',  count: merged.length },
   ]
 
   const showCommits = tab === 'all' || tab === 'commits'
@@ -44,11 +44,11 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
 
   return (
     <main className="min-h-screen">
-      <nav className="border-b border-zinc-800/50 px-6 py-4 backdrop-blur-sm sticky top-0 z-10 bg-zinc-950/80">
+      <nav className="glass-nav border-b border-white/5 px-6 py-4 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-2 text-sm flex-wrap">
           <div className="flex items-center gap-2">
-            <a href="/" className="font-bold text-zinc-100 hover:text-white transition-colors flex items-center gap-2">
-              <div className="w-5 h-5 bg-white rounded flex items-center justify-center">
+            <a href="/" className="font-semibold text-zinc-100 hover:text-white transition-colors flex items-center gap-2">
+              <div className="w-5 h-5 bg-gradient-to-br from-violet-400 to-cyan-300 rounded flex items-center justify-center">
                 <IconGitCommit className="w-3 h-3 text-zinc-950" />
               </div>
               GitBrief
@@ -59,13 +59,20 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
             <span className="text-zinc-700">/</span>
             <span className="text-zinc-200 font-mono text-xs font-semibold">{repo}</span>
           </div>
-          <LanguageToggle />
+
+          <a
+            href="/"
+            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
+          >
+            <IconArrowLeft className="w-3.5 h-3.5" />
+            Search another repo
+          </a>
         </div>
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
         {/* repo meta */}
-        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-6">
+        <div className="glass-panel rounded-2xl p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-xl font-bold text-zinc-100 font-mono">{meta.fullName}</h1>
@@ -89,7 +96,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
               href={`https://github.com/${owner}/${repo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors border border-zinc-700 rounded-lg px-3 py-2 font-mono whitespace-nowrap"
+              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
             >
               <IconExternalLink className="w-3 h-3" />
               GitHub
@@ -98,7 +105,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
         </div>
 
         {/* tabs */}
-        <div className="flex items-center gap-1 border-b border-zinc-800/60">
+        <div className="flex items-center gap-1 border-b border-white/5">
           {tabs.map(tb => (
             <button
               key={tb.id}
@@ -107,10 +114,12 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                 ${tab === tb.id ? 'text-zinc-100' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               {tb.label}
-              <span className={`text-[10px] px-1.5 py-0.5 rounded ${tab === tb.id ? 'bg-zinc-700 text-zinc-200' : 'bg-zinc-800 text-zinc-500'}`}>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded ${tab === tb.id ? 'bg-white/10 text-zinc-200' : 'bg-white/5 text-zinc-500'}`}>
                 {tb.count}
               </span>
-              {tab === tb.id && <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-white rounded-full" />}
+              {tab === tb.id && (
+                <span className="absolute left-0 right-0 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-violet-400 to-cyan-300" />
+              )}
             </button>
           ))}
         </div>
@@ -120,23 +129,23 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
           <section>
             <h2 className="flex items-center gap-2 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
               <IconGitCommit className="w-3.5 h-3.5" />
-              {t('recentCommits')}
+              Recent Commits
             </h2>
             <div className="space-y-px">
               {commits.map(c => (
                 <a
                   key={c.sha}
                   href={`/${owner}/${repo}/commit/${c.sha}`}
-                  className="group flex items-center justify-between gap-4 bg-zinc-900/40 hover:bg-zinc-900 border border-zinc-800/60 hover:border-zinc-700 rounded-xl px-5 py-4 transition-all mb-1"
+                  className="glass-panel group flex items-center justify-between gap-4 rounded-2xl px-5 py-4 mb-2 hover:-translate-y-0.5 transition-transform"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 bg-zinc-800 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-zinc-700 transition-colors">
+                    <div className="w-7 h-7 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
                       <IconGitCommit className="w-3.5 h-3.5 text-zinc-400" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm text-zinc-200 truncate font-medium">{c.message}</p>
                       <p className="text-xs text-zinc-600 font-mono mt-0.5">
-                        {c.sha.slice(0, 7)} · {c.author} · {timeAgo(c.date)}
+                      {c.sha.slice(0, 7)} · {c.author} · {new Date(c.date).toLocaleDateString('en-US')}
                       </p>
                     </div>
                   </div>
@@ -144,7 +153,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                 </a>
               ))}
               {commits.length === 0 && (
-                <p className="text-zinc-600 text-sm font-mono py-4">{t('noCommits')}</p>
+                <p className="text-zinc-600 text-sm font-mono py-4">No commits found.</p>
               )}
             </div>
           </section>
@@ -155,17 +164,17 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
           <section>
             <h2 className="flex items-center gap-2 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
               <IconGitPullRequest className="w-3.5 h-3.5" />
-              {tab === 'merges' ? t('mergedPullRequests') : t('pullRequests')}
+              {tab === 'merges' ? 'Merged Pull Requests' : 'Pull Requests'}
             </h2>
             <div className="space-y-px">
               {visiblePrs.map(pr => (
                 <a
                   key={pr.number}
                   href={`/${owner}/${repo}/pr/${pr.number}`}
-                  className="group flex items-center justify-between gap-4 bg-zinc-900/40 hover:bg-zinc-900 border border-zinc-800/60 hover:border-zinc-700 rounded-xl px-5 py-4 transition-all mb-1"
+                  className="glass-panel group flex items-center justify-between gap-4 rounded-2xl px-5 py-4 mb-2 hover:-translate-y-0.5 transition-transform"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 bg-zinc-800 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-zinc-700 transition-colors">
+                    <div className="w-7 h-7 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
                       {pr.merged
                         ? <IconGitMerge className="w-3.5 h-3.5 text-purple-400" />
                         : <IconGitPullRequest className="w-3.5 h-3.5 text-zinc-400" />}
@@ -179,7 +188,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                             ? 'bg-purple-500/10 text-purple-400'
                             : pr.state === 'open'
                               ? 'bg-emerald-500/10 text-emerald-400'
-                              : 'bg-zinc-800 text-zinc-500'
+                              : 'bg-white/5 text-zinc-500'
                         }`}>{pr.merged ? 'merged' : pr.state}</span>
                       </p>
                     </div>
@@ -189,7 +198,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
               ))}
               {visiblePrs.length === 0 && (
                 <p className="text-zinc-600 text-sm font-mono py-4">
-                  {tab === 'merges' ? t('noMergedPullRequests') : t('noPullRequests')}
+                  {tab === 'merges' ? 'No merged pull requests yet.' : 'No pull requests found.'}
                 </p>
               )}
             </div>

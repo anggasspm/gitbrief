@@ -42,8 +42,8 @@ function FileDiff({ filename, diff }: DiffFile) {
   let newLn = 0
 
   return (
-    <div className="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden mb-3">
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-zinc-800 bg-zinc-900/60">
+    <div className="glass-panel rounded-2xl overflow-hidden mb-3">
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/5 bg-white/5">
         <IconFileText className="w-3.5 h-3.5 text-zinc-500" />
         <span className="text-xs font-mono text-zinc-400">{filename}</span>
       </div>
@@ -60,7 +60,7 @@ function FileDiff({ filename, diff }: DiffFile) {
                   newLn = oldLn
                 }
                 return (
-                  <tr key={r.id} className="bg-zinc-900/40">
+                  <tr key={r.id} className="bg-white/5">
                     <td colSpan={3} className="px-4 py-1.5 text-zinc-500">{r.line}</td>
                   </tr>
                 )
@@ -76,11 +76,11 @@ function FileDiff({ filename, diff }: DiffFile) {
               const markerColor = r.type === 'add' ? 'text-emerald-500' : r.type === 'del' ? 'text-red-500' : 'text-zinc-600'
 
               return (
-                <tr key={r.id} className={`${bg} hover:bg-zinc-800/30`}>
-                  <td className="w-10 px-2 text-right text-zinc-600 select-none border-r border-zinc-800/60">
+                <tr key={r.id} className={`${bg} hover:bg-white/5`}>
+                  <td className="w-10 px-2 text-right text-zinc-600 select-none border-r border-white/5">
                     {r.type !== 'add' ? oldLn : ''}
                   </td>
-                  <td className="w-10 px-2 text-right text-zinc-600 select-none border-r border-zinc-800/60">
+                  <td className="w-10 px-2 text-right text-zinc-600 select-none border-r border-white/5">
                     {r.type !== 'del' ? newLn : ''}
                   </td>
                   <td className={`px-3 py-0.5 whitespace-pre ${text}`}>

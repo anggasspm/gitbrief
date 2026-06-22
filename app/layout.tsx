@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { LangProvider } from '@/lib/i18n-context'
+import { inter } from '@/lib/fonts'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'GitBrief — Git commits explained in plain English',
@@ -13,8 +10,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-zinc-950 text-zinc-100 antialiased`}>
-        <LangProvider>{children}</LangProvider>
+      <body className={`${inter.className} text-zinc-100 antialiased`}>
+        {children}
       </body>
     </html>
   )

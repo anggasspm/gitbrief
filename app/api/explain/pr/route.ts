@@ -4,12 +4,10 @@ import { parseGitHubUrl } from '@/lib/parse-url'
 import { fetchPrData }    from '@/lib/github'
 import { explainPR }      from '@/lib/gemini'
 import { prisma }         from '@/lib/db'
-import type { Lang }      from '@/lib/i18n'
 
 export async function POST(req: NextRequest) {
   try {
-    const { url, lang: rawLang } = await req.json()
-    const lang: Lang = rawLang === 'id' ? 'id' : 'en'
+    const { url } = await req.json()
 
     const parsed = parseGitHubUrl(url)
     if (parsed.type !== 'pr')
@@ -18,21 +16,21 @@ export async function POST(req: NextRequest) {
     const { owner, repo, number } = parsed
 
     const cached = await prisma.prExplanation.findUnique({
-      where: { owner_repo_number_lang: { owner, repo, number, lang } },
+      where: { owner_repo_number: { owner, repo, number } },
     })
     if (cached) {
-      // diff tidak tersimpan di DB untuk PR — fetch ringan supaya tetap bisa ditampilkan
+      // diff isn't stored in DB for PRs — fetch it lightly so it can still be displayed
       let diff = ''
       try { diff = (await fetchPrData(owner, repo, number)).diff } catch {}
       return NextResponse.json({ ...cached, diff, cached: true })
     }
 
     const prData      = await fetchPrData(owner, repo, number)
-    const explanation = await explainPR(prData, lang)
+    const explanation = await explainPR(prData)
     const saved = await prisma.prExplanation.upsert({
-      where: { owner_repo_number_lang: { owner, repo, number, lang } },
+      where: { owner_repo_number: { owner, repo, number } },
       create: {
-        owner, repo, number, lang, title: prData.title, ...explanation,
+        owner, repo, number, title: prData.title, ...explanation,
         breakingDetails: explanation.breakingDetails ?? null,
         security:        explanation.security        ?? null,
       },

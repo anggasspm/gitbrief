@@ -118,7 +118,7 @@ export default function Home() {
                   className="w-8 h-8 rounded-lg flex items-center justify-center mb-4"
                   style={{ background: 'rgba(0,113,227,0.08)' }}
                 >
-                  <f.icon className="w-4 h-4" style={{ color: 'var(--accent)' } as React.CSSProperties} />
+                  <f.icon className="w-4 h-4" style={{ color: 'var(--accent)' }} />
                 </div>
                 <h3
                   className="text-sm font-semibold mb-1.5"

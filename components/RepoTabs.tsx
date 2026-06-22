@@ -1,3 +1,4 @@
+// components/RepoTabs.tsx
 'use client'
 
 import { useState } from 'react'
@@ -57,7 +58,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
           >
             <a
               href="/"
-              className="font-semibold text-sm flex items-center gap-2 flex-shrink-0"
+              className="font-semibold text-sm flex items-center gap-2 shrink-0"
               style={{ color: 'var(--text-primary)' }}
             >
               <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'var(--accent)' }}>
@@ -82,7 +83,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
 
           <a
             href="/"
-            className="flex items-center gap-1.5 text-xs font-medium flex-shrink-0 transition-opacity hover:opacity-70"
+            className="flex items-center gap-1.5 text-xs font-medium shrink-0 transition-opacity hover:opacity-70"
             style={{ color: 'var(--accent)' }}
           >
             <IconArrowLeft className="w-3 h-3" />
@@ -133,7 +134,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
               href={`https://github.com/${owner}/${repo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-opacity hover:opacity-70 flex-shrink-0"
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-opacity hover:opacity-70 shrink-0"
               style={{
                 background: 'rgba(0,113,227,0.08)',
                 color: 'var(--accent)',
@@ -199,12 +200,12 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3.5 min-w-0">
                       <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
                         style={{ background: 'rgba(0,0,0,0.05)' }}
                       >
                         <IconGitCommit
                           className="w-3.5 h-3.5"
-                          style={{ color: 'var(--text-secondary)' } as React.CSSProperties}
+                          style={{ color: 'var(--text-secondary)' }}
                         />
                       </div>
                       <div className="min-w-0">
@@ -223,8 +224,8 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                       </div>
                     </div>
                     <IconChevronRight
-                      className="w-4 h-4 flex-shrink-0"
-                      style={{ color: 'var(--text-tertiary)' } as React.CSSProperties}
+                      className="w-4 h-4 shrink-0"
+                      style={{ color: 'var(--text-tertiary)' }}
                     />
                   </div>
                 </GlassCard>
@@ -258,12 +259,12 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3.5 min-w-0">
                       <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
                         style={{ background: 'rgba(0,0,0,0.05)' }}
                       >
                         {pr.merged
-                          ? <IconGitMerge className="w-3.5 h-3.5" style={{ color: '#8b5cf6' } as React.CSSProperties} />
-                          : <IconGitPullRequest className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' } as React.CSSProperties} />
+                          ? <IconGitMerge className="w-3.5 h-3.5" style={{ color: '#8b5cf6' }} />
+                          : <IconGitPullRequest className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' }} />
                         }
                       </div>
                       <div className="min-w-0">
@@ -299,8 +300,8 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                       </div>
                     </div>
                     <IconChevronRight
-                      className="w-4 h-4 flex-shrink-0"
-                      style={{ color: 'var(--text-tertiary)' } as React.CSSProperties}
+                      className="w-4 h-4 shrink-0"
+                      style={{ color: 'var(--text-tertiary)' }}
                     />
                   </div>
                 </GlassCard>

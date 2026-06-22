@@ -1,3 +1,5 @@
+// components/ExplainCard.tsx
+
 import { GlassCard }     from './GlassCard'
 import { RiskBadge }     from './RiskBadge'
 import { BreakingBadge } from './BreakingBadge'
@@ -58,8 +60,9 @@ export function ExplainCard(p: Props) {
               className="flex items-start gap-3 text-sm leading-relaxed"
               style={{ color: 'var(--text-secondary)' }}
             >
+              {/* mt-2.5 menggantikan mt-[9px] */}
               <span
-                className="mt-[9px] w-1.5 h-1.5 rounded-full flex-shrink-0"
+                className="mt-2.5 w-1.5 h-1.5 rounded-full shrink-0"
                 style={{ background: 'var(--accent)', opacity: 0.6 }}
               />
               {item}
@@ -93,7 +96,7 @@ export function ExplainCard(p: Props) {
 
       {p.breaking && p.breakingDetails && (
         <SectionCard
-          icon={<IconAlertTriangle className="w-4 h-4" style={{ color: '#dc2626' } as React.CSSProperties} />}
+          icon={<IconAlertTriangle className="w-4 h-4" style={{ color: '#dc2626' }} />}
           title="Breaking Changes"
           borderAccent="rgba(220,38,38,0.15)"
         >

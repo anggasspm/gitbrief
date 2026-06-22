@@ -52,7 +52,7 @@ function FileDiff({ filename, diff }: DiffFile) {
           background: 'rgba(0,0,0,0.02)',
         }}
       >
-        <IconFileText className="w-3.5 h-3.5" style={{ color: 'var(--text-tertiary)' } as React.CSSProperties} />
+        <IconFileText className="w-3.5 h-3.5" style={{ color: 'var(--text-tertiary)' }} />
         <span className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
           {filename}
         </span>

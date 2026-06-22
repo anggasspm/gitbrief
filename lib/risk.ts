@@ -1,10 +1,10 @@
 export function riskColor(risk: string) {
   return {
-    LOW:      'text-emerald-400 bg-emerald-400/8 border-emerald-400/20',
-    MEDIUM:   'text-amber-400   bg-amber-400/8   border-amber-400/20',
-    HIGH:     'text-orange-400  bg-orange-400/8  border-orange-400/20',
-    CRITICAL: 'text-red-400     bg-red-400/8     border-red-400/20',
-  }[risk] ?? 'text-zinc-400 bg-zinc-400/8 border-zinc-400/20'
+    LOW:      'text-emerald-700 bg-emerald-50  border-emerald-200',
+    MEDIUM:   'text-amber-700   bg-amber-50    border-amber-200',
+    HIGH:     'text-orange-700  bg-orange-50   border-orange-200',
+    CRITICAL: 'text-red-700     bg-red-50      border-red-200',
+  }[risk] ?? 'text-gray-600 bg-gray-100 border-gray-200'
 }
 
 export function riskBarColor(score: number) {

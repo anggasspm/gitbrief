@@ -8,10 +8,10 @@ export function BackButton() {
   return (
     <button
       onClick={() => router.back()}
-      className="flex items-center gap-1.5 text-xs font-medium transition-colors"
-      style={{ color: 'var(--accent)' }}
+      className="flex items-center gap-2 text-sm font-bold tracking-tight transition-opacity hover:opacity-70 shrink-0"
+      style={{ color: 'var(--text-primary)' }}
     >
-      <IconArrowLeft className="w-3 h-3" />
+      <IconArrowLeft className="w-4 h-4" />
       Back
     </button>
   )

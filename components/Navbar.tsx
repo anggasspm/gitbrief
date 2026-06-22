@@ -1,39 +1,37 @@
-import { IconGitCommit } from './Icons'
+import { IconLogo } from './Icons'
 
 interface NavbarProps {
+  left?:       React.ReactNode
   breadcrumb?: React.ReactNode
   action?:     React.ReactNode
 }
 
-export function Navbar({ breadcrumb, action }: NavbarProps) {
+export function Navbar({ left, breadcrumb, action }: NavbarProps) {
   return (
-    <div className="sticky top-4 z-20 flex justify-center px-5">
-      <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-8 w-full max-w-3xl">
-        <a href="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <div
-            className="w-6 h-6 rounded-md flex items-center justify-center"
-            style={{ background: '#0071e3' }}
-          >
-            <IconGitCommit className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span
-            className="text-sm font-semibold"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            GitBrief
-          </span>
-        </a>
+    <div className="sticky top-5 z-20 px-5 w-full">
+      <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-4 w-full max-w-3xl mx-auto">
+        
+        <div className="flex items-center gap-3 min-w-0">
+          {/* KIRI: Logo atau Elemen Custom */}
+          {left !== undefined ? left : (
+            <a href="/" className="flex items-center gap-2.5 shrink-0 transition-opacity hover:opacity-70">
+              <IconLogo className="w-5 h-5" style={{ color: 'var(--text-primary)' }} />
+              <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                GitBrief
+              </span>
+            </a>
+          )}
 
-        {breadcrumb && (
-          <div
-            className="flex items-center gap-1 text-xs font-mono min-w-0 overflow-hidden"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {breadcrumb}
-          </div>
-        )}
+          {/* TENGAH: Breadcrumb */}
+          {breadcrumb && (
+            <div className="flex items-center gap-1.5 text-xs font-mono min-w-0 overflow-hidden" style={{ color: 'var(--text-secondary)' }}>
+              {breadcrumb}
+            </div>
+          )}
+        </div>
 
-        {action && <div className="flex-shrink-0">{action}</div>}
+        {/* KANAN: Action */}
+        {action && <div className="shrink-0">{action}</div>}
       </nav>
     </div>
   )

@@ -164,3 +164,16 @@ export function IconArrowLeft({ className, style }: IconProps) {
     </svg>
   )
 }
+
+export function IconLogo({ className, style }: IconProps) {
+  return (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      {/* Sparkle (AI) */}
+      <path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z" fill="currentColor"/>
+      {/* Garis koneksi Git */}
+      <path d="M12 14v5" />
+      {/* Node Git */}
+      <circle cx="12" cy="21" r="2" />
+    </svg>
+  )
+}

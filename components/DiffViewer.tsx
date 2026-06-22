@@ -67,7 +67,7 @@ function FileDiff({ filename, diff }: DiffFile) {
                 const m = r.line.match(/-(\d+)/)
                 if (m) { oldLn = parseInt(m[1], 10) - 1; newLn = oldLn }
                 return (
-                  <tr key={r.id} style={{ background: 'rgba(0,113,227,0.04)' }}>
+                  <tr key={r.id} style={{ background: 'rgba(0,0,0,0.03)' }}>
                     <td colSpan={3} className="px-4 py-1.5" style={{ color: 'var(--text-secondary)' }}>
                       {r.line}
                     </td>
@@ -94,7 +94,7 @@ function FileDiff({ filename, diff }: DiffFile) {
                   </td>
                   <td className="px-3 py-0.5 whitespace-pre" style={{ color: text }}>
                     <span className="inline-block w-3" style={{ color: mc }}>{mark}</span>
-                    {r.line.slice(1)}
+                    {r.line.match(/^[ +-]/) ? r.line.slice(1) : r.line}
                   </td>
                 </tr>
               )

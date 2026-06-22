@@ -1,8 +1,8 @@
-// components/RepoTabs.tsx
 'use client'
 
 import { useState } from 'react'
 import { GlassCard } from './GlassCard'
+import { Navbar } from './Navbar'
 import {
   IconGitCommit, IconGitPullRequest, IconGitMerge,
   IconStar, IconExternalLink, IconChevronRight, IconArrowLeft,
@@ -49,24 +49,12 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
 
   return (
     <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      {/* floating navbar */}
-      <div className="pt-5 pb-2 sticky top-0 z-20 px-5">
-        <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-6 mx-auto max-w-3xl">
-          <div
-            className="flex items-center gap-1.5 text-xs font-mono min-w-0"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            <a
-              href="/"
-              className="font-semibold text-sm flex items-center gap-2 shrink-0"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'var(--accent)' }}>
-                <IconGitCommit className="w-3 h-3 text-white" />
-              </div>
-              GitBrief
-            </a>
-            <span className="mx-1" style={{ color: 'var(--separator)' }}>/</span>
+      
+      {/* NAVBAR (Tanpa wrapper pembungkus) */}
+      <Navbar
+        breadcrumb={
+          <>
+            <span className="mx-1 opacity-30">/</span>
             <a
               href={`https://github.com/${owner}`}
               target="_blank"
@@ -75,22 +63,23 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
             >
               {owner}
             </a>
-            <span className="mx-0.5">/</span>
+            <span className="mx-0.5 opacity-30">/</span>
             <span className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
               {repo}
             </span>
-          </div>
-
+          </>
+        }
+        action={
           <a
             href="/"
             className="flex items-center gap-1.5 text-xs font-medium shrink-0 transition-opacity hover:opacity-70"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--text-primary)' }}
           >
             <IconArrowLeft className="w-3 h-3" />
             New search
           </a>
-        </nav>
-      </div>
+        }
+      />
 
       <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
         {/* repo meta */}
@@ -117,7 +106,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
                     className="text-xs font-mono flex items-center gap-1.5"
                     style={{ color: 'var(--text-secondary)' }}
                   >
-                    <span className="w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }} />
+                    <span className="w-2 h-2 rounded-full" style={{ background: 'var(--text-primary)' }} />
                     {meta.language}
                   </span>
                 )}
@@ -136,8 +125,8 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-opacity hover:opacity-70 shrink-0"
               style={{
-                background: 'rgba(0,113,227,0.08)',
-                color: 'var(--accent)',
+                background: 'rgba(0,0,0,0.05)',
+                color: 'var(--text-primary)',
               }}
             >
               <IconExternalLink className="w-3 h-3" />
@@ -173,7 +162,7 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
               {tab === tb.id && (
                 <span
                   className="absolute left-0 right-0 -bottom-px h-px rounded-full"
-                  style={{ background: 'var(--accent)' }}
+                  style={{ background: 'var(--text-primary)' }}
                 />
               )}
             </button>

@@ -17,7 +17,7 @@ export function UrlInput() {
 
     const parsed = parseGitHubUrl(url)
     if (parsed.type === 'invalid') {
-      setError('Paste a GitHub repository, commit, or PR URL.')
+      setError('Enter a valid GitHub repository, commit, or pull request URL.')
       return
     }
 
@@ -28,10 +28,8 @@ export function UrlInput() {
 
     setLoading(true)
     try {
-      const endpoint = parsed.type === 'commit'
-        ? '/api/explain/commit'
-        : '/api/explain/pr'
-
+      const endpoint =
+        parsed.type === 'commit' ? '/api/explain/commit' : '/api/explain/pr'
       const res  = await fetch(endpoint, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,35 +50,40 @@ export function UrlInput() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full space-y-3">
-      <div className="glass-input-wrap">
-        <div className="flex gap-2 bg-zinc-950/80 rounded-[0.95rem] p-1.5">
-          <input
-            type="url"
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-            placeholder="https://github.com/owner/repo"
-            className="flex-1 bg-transparent px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none font-mono"
-            autoFocus
-          />
-          <button
-            type="submit"
-            disabled={loading || !url.trim()}
-            className="btn-sheen px-5 py-2.5 bg-gradient-to-r from-violet-400 to-cyan-300 text-zinc-950 text-sm font-semibold rounded-xl hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2 whitespace-nowrap"
-          >
-            {loading ? (
-              <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-            ) : (
-              <IconArrowRight className="w-4 h-4" />
-            )}
-            {loading ? 'Analyzing…' : 'Analyze'}
-          </button>
-        </div>
+    <div className="w-full space-y-3">
+      <div className="apple-input flex gap-2 p-1.5">
+        <input
+          type="url"
+          value={url}
+          onChange={e => setUrl(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSubmit(e as unknown as React.FormEvent)}
+          placeholder="https://github.com/owner/repo/commit/…"
+          className="flex-1 bg-transparent px-3 py-2.5 text-sm focus:outline-none font-mono"
+          style={{ color: 'var(--text-primary)' }}
+          autoFocus
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={loading || !url.trim()}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+          style={{ background: loading ? '#6b7280' : 'var(--accent)' }}
+        >
+          {loading ? (
+            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <IconArrowRight className="w-4 h-4" />
+          )}
+          {loading ? 'Analyzing…' : 'Analyze'}
+        </button>
       </div>
-      {error && <p className="text-red-400 text-sm pl-1">{error}</p>}
-      <p className="text-zinc-600 text-xs pl-1">
-        Paste a repo, commit, or pull request URL from any public GitHub repository.
+      {error && (
+        <p className="text-sm pl-1" style={{ color: '#dc2626' }}>
+          {error}
+        </p>
+      )}
+      <p className="text-xs pl-1" style={{ color: 'var(--text-tertiary)' }}>
+        Paste any public GitHub repo, commit, or pull request URL.
       </p>
-    </form>
+    </div>
   )
 }

@@ -1,67 +1,97 @@
-import { UrlInput }     from '@/components/UrlInput'
-import { spaceGrotesk } from '@/lib/fonts'
-import { IconGitCommit, IconGitPullRequest, IconShield, IconAlertTriangle, IconDatabase, IconFileText } from '@/components/Icons'
+import { Navbar }    from '@/components/Navbar'
+import { GlassCard } from '@/components/GlassCard'
+import { UrlInput }  from '@/components/UrlInput'
+import {
+  IconGitCommit, IconShield, IconAlertTriangle,
+  IconDatabase, IconFileText, IconGitPullRequest,
+} from '@/components/Icons'
 
 const FEATURES = [
-  { icon: IconGitCommit,       title: 'Plain English Summary',    desc: 'Understand what changed without reading the diff.' },
-  { icon: IconAlertTriangle,   title: 'Risk Score 0–100',         desc: 'Predicts merge risk from changed files and patterns.' },
-  { icon: IconAlertTriangle,   title: 'Breaking Change Detector', desc: 'Flags API contract and function signature changes.' },
-  { icon: IconShield,          title: 'Security Analysis',        desc: 'Identifies auth, credential, and crypto changes.' },
-  { icon: IconDatabase,        title: 'Database Detector',        desc: 'Spots migrations, column removals, schema changes.' },
-  { icon: IconFileText,        title: 'Changelog Generator',      desc: 'Creates release notes automatically.' },
+  {
+    icon: IconGitCommit,
+    title: 'Plain English Summary',
+    desc: 'Understand what changed without reading the diff.',
+  },
+  {
+    icon: IconAlertTriangle,
+    title: 'Risk Score',
+    desc: 'Predicts merge risk from changed files and patterns.',
+  },
+  {
+    icon: IconAlertTriangle,
+    title: 'Breaking Change Detector',
+    desc: 'Flags API contract and function signature changes.',
+  },
+  {
+    icon: IconShield,
+    title: 'Security Analysis',
+    desc: 'Identifies auth, credential, and crypto changes.',
+  },
+  {
+    icon: IconDatabase,
+    title: 'Database Detector',
+    desc: 'Spots migrations, column removals, schema changes.',
+  },
+  {
+    icon: IconFileText,
+    title: 'Changelog Generator',
+    desc: 'Creates release notes automatically.',
+  },
 ]
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* ambient liquid orbs */}
-      <div
-        className="glass-orb w-[36rem] h-[36rem] -top-40 -left-32 bg-gradient-to-br from-violet-500/40 to-fuchsia-500/10 animate-[liquid-drift_22s_ease-in-out_infinite]"
-        aria-hidden
-      />
-      <div
-        className="glass-orb w-[30rem] h-[30rem] top-1/3 -right-40 bg-gradient-to-br from-cyan-400/35 to-blue-500/10 animate-[liquid-drift-slow_26s_ease-in-out_infinite]"
-        aria-hidden
-      />
-
-      {/* nav */}
-      <nav className="glass-nav border-b border-white/5 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 bg-gradient-to-br from-violet-400 to-cyan-300 rounded-md flex items-center justify-center">
-              <IconGitCommit className="w-3.5 h-3.5 text-zinc-950" />
-            </div>
-            <span className="font-semibold tracking-tight text-zinc-100">GitBrief</span>
-            <span className="text-[10px] px-1.5 py-0.5 glass-pill text-zinc-400 rounded font-mono">beta</span>
-          </div>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono"
-          >
-            github.com ↗
-          </a>
-        </div>
-      </nav>
+    <main
+      className="min-h-screen flex flex-col"
+      style={{ background: 'var(--bg)' }}
+    >
+      {/* navbar */}
+      <div className="pt-5">
+        <Navbar
+          action={
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium transition-colors"
+              style={{ color: 'var(--accent)' }}
+            >
+              GitHub ↗
+            </a>
+          }
+        />
+      </div>
 
       {/* hero */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-28 text-center relative z-[1]">
-        <div className="max-w-2xl w-full space-y-10">
+      <section className="flex-1 flex flex-col items-center justify-center px-6 py-28 text-center">
+        <div className="max-w-xl w-full space-y-10">
           <div className="space-y-5">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 glass-pill rounded-full text-xs text-zinc-400 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.6)]" />
+            {/* eyebrow */}
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
+              style={{
+                background: 'rgba(0,113,227,0.08)',
+                color: 'var(--accent)',
+              }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Powered by Gemini 2.5 Flash
             </div>
-            <h1 className={`${spaceGrotesk.className} text-5xl sm:text-6xl font-semibold tracking-tight leading-[1.08]`}>
-              <span className="text-zinc-50">Git commits</span>
+
+            <h1
+              className="text-5xl sm:text-6xl font-semibold leading-[1.06] tracking-tight"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              Git commits,
               <br />
-              <span className="bg-gradient-to-r from-violet-300 via-zinc-100 to-cyan-300 bg-clip-text text-transparent">
-                explained.
-              </span>
+              explained.
             </h1>
-            <p className="text-zinc-400 text-lg max-w-md mx-auto leading-relaxed">
-              Paste any GitHub repo, commit, or PR URL. Get a structured explanation — summary, risk score, breaking changes, and more.
+
+            <p
+              className="text-lg leading-relaxed max-w-sm mx-auto"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              Paste any GitHub URL and get a structured explanation — summary, risk score, breaking changes, and more.
             </p>
           </div>
 
@@ -70,31 +100,55 @@ export default function Home() {
       </section>
 
       {/* features */}
-      <section className="border-t border-white/5 px-6 py-20 relative z-[1]">
+      <section
+        className="px-6 py-24"
+        style={{ borderTop: '1px solid var(--separator)' }}
+      >
         <div className="max-w-4xl mx-auto">
-          <p className="text-center text-xs font-mono text-zinc-600 uppercase tracking-widest mb-10">
+          <p
+            className="text-center text-xs font-semibold uppercase tracking-widest mb-12"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
             What you get
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {FEATURES.map((f, i) => (
-              <div key={i} className="glass-panel group rounded-2xl p-5 space-y-3">
-                <div className="w-8 h-8 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <f.icon className="w-4 h-4 text-zinc-300" />
+              <GlassCard key={i} className="p-6" parallax>
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mb-4"
+                  style={{ background: 'rgba(0,113,227,0.08)' }}
+                >
+                  <f.icon className="w-4 h-4" style={{ color: 'var(--accent)' } as React.CSSProperties} />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-zinc-200 text-sm mb-1">{f.title}</h3>
-                  <p className="text-zinc-500 text-sm leading-relaxed">{f.desc}</p>
-                </div>
-              </div>
+                <h3
+                  className="text-sm font-semibold mb-1.5"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  {f.title}
+                </h3>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  {f.desc}
+                </p>
+              </GlassCard>
             ))}
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-white/5 px-6 py-6 relative z-[1]">
-        <div className="max-w-4xl mx-auto flex items-center justify-between text-xs text-zinc-600 font-mono">
+      {/* footer */}
+      <footer
+        className="px-6 py-8"
+        style={{ borderTop: '1px solid var(--separator)' }}
+      >
+        <div
+          className="max-w-4xl mx-auto flex items-center justify-between text-xs font-mono"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
           <span>GitBrief</span>
-          <span>Git commits explained so humans don&apos;t have to read raw diffs.</span>
+          <span>Git commits explained in plain English.</span>
         </div>
       </footer>
     </main>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { GlassCard } from './GlassCard'
 import {
   IconGitCommit, IconGitPullRequest, IconGitMerge,
   IconStar, IconExternalLink, IconChevronRight, IconArrowLeft,
@@ -12,20 +13,20 @@ function timeAgo(dateStr: string) {
   const m = Math.floor(diff / 60000)
   const h = Math.floor(m / 60)
   const d = Math.floor(h / 24)
-  if (d > 0)  return `${d}d ago`
-  if (h > 0)  return `${h}h ago`
-  if (m > 0)  return `${m}m ago`
+  if (d > 0) return `${d}d ago`
+  if (h > 0) return `${h}h ago`
+  if (m > 0) return `${m}m ago`
   return 'just now'
 }
 
 type Tab = 'all' | 'commits' | 'prs' | 'merges'
 
 interface Props {
-  owner: string
-  repo: string
-  meta: { fullName: string; description: string | null; stars: number; language: string | null }
+  owner:   string
+  repo:    string
+  meta:    { fullName: string; description: string | null; stars: number; language: string | null }
   commits: RepoCommit[]
-  prs: RepoPR[]
+  prs:     RepoPR[]
 }
 
 export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
@@ -40,53 +41,89 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
   ]
 
   const showCommits = tab === 'all' || tab === 'commits'
-  const visiblePrs  = tab === 'all' ? prs : tab === 'prs' ? prs : tab === 'merges' ? merged : []
+  const visiblePrs  =
+    tab === 'all'    ? prs    :
+    tab === 'prs'    ? prs    :
+    tab === 'merges' ? merged : []
 
   return (
-    <main className="min-h-screen">
-      <nav className="glass-nav border-b border-white/5 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-2 text-sm flex-wrap">
-          <div className="flex items-center gap-2">
-            <a href="/" className="font-semibold text-zinc-100 hover:text-white transition-colors flex items-center gap-2">
-              <div className="w-5 h-5 bg-gradient-to-br from-violet-400 to-cyan-300 rounded flex items-center justify-center">
-                <IconGitCommit className="w-3 h-3 text-zinc-950" />
+    <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      {/* floating navbar */}
+      <div className="pt-5 pb-2 sticky top-0 z-20 px-5">
+        <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-6 mx-auto max-w-3xl">
+          <div
+            className="flex items-center gap-1.5 text-xs font-mono min-w-0"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            <a
+              href="/"
+              className="font-semibold text-sm flex items-center gap-2 flex-shrink-0"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'var(--accent)' }}>
+                <IconGitCommit className="w-3 h-3 text-white" />
               </div>
               GitBrief
             </a>
-            <span className="text-zinc-700">/</span>
-            <a href={`https://github.com/${owner}`} target="_blank" rel="noopener noreferrer"
-              className="text-zinc-400 hover:text-zinc-200 transition-colors font-mono text-xs">{owner}</a>
-            <span className="text-zinc-700">/</span>
-            <span className="text-zinc-200 font-mono text-xs font-semibold">{repo}</span>
+            <span className="mx-1" style={{ color: 'var(--separator)' }}>/</span>
+            <a
+              href={`https://github.com/${owner}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline truncate"
+            >
+              {owner}
+            </a>
+            <span className="mx-0.5">/</span>
+            <span className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+              {repo}
+            </span>
           </div>
 
           <a
             href="/"
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
+            className="flex items-center gap-1.5 text-xs font-medium flex-shrink-0 transition-opacity hover:opacity-70"
+            style={{ color: 'var(--accent)' }}
           >
-            <IconArrowLeft className="w-3.5 h-3.5" />
-            Search another repo
+            <IconArrowLeft className="w-3 h-3" />
+            New search
           </a>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
+      <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
         {/* repo meta */}
-        <div className="glass-panel rounded-2xl p-6">
+        <GlassCard className="p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-zinc-100 font-mono">{meta.fullName}</h1>
+              <h1
+                className="text-xl font-semibold font-mono"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {meta.fullName}
+              </h1>
               {meta.description && (
-                <p className="text-zinc-400 text-sm mt-1 leading-relaxed">{meta.description}</p>
+                <p
+                  className="text-sm mt-2 leading-relaxed max-w-md"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  {meta.description}
+                </p>
               )}
-              <div className="flex items-center gap-4 mt-3">
+              <div className="flex items-center gap-5 mt-4">
                 {meta.language && (
-                  <span className="text-xs text-zinc-500 font-mono flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-400" />
+                  <span
+                    className="text-xs font-mono flex items-center gap-1.5"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
+                    <span className="w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }} />
                     {meta.language}
                   </span>
                 )}
-                <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
+                <span
+                  className="text-xs font-mono flex items-center gap-1"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
                   <IconStar className="w-3 h-3" />
                   {meta.stars.toLocaleString()}
                 </span>
@@ -96,29 +133,47 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
               href={`https://github.com/${owner}/${repo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-opacity hover:opacity-70 flex-shrink-0"
+              style={{
+                background: 'rgba(0,113,227,0.08)',
+                color: 'var(--accent)',
+              }}
             >
               <IconExternalLink className="w-3 h-3" />
               GitHub
             </a>
           </div>
-        </div>
+        </GlassCard>
 
         {/* tabs */}
-        <div className="flex items-center gap-1 border-b border-white/5">
+        <div
+          className="flex items-center gap-0.5"
+          style={{ borderBottom: '1px solid var(--separator)' }}
+        >
           {tabs.map(tb => (
             <button
               key={tb.id}
               onClick={() => setTab(tb.id)}
-              className={`relative px-4 py-2.5 text-xs font-mono font-medium transition-colors flex items-center gap-1.5
-                ${tab === tb.id ? 'text-zinc-100' : 'text-zinc-500 hover:text-zinc-300'}`}
+              className="relative px-4 py-2.5 text-xs font-medium transition-colors flex items-center gap-1.5"
+              style={{
+                color: tab === tb.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+              }}
             >
               {tb.label}
-              <span className={`text-[10px] px-1.5 py-0.5 rounded ${tab === tb.id ? 'bg-white/10 text-zinc-200' : 'bg-white/5 text-zinc-500'}`}>
+              <span
+                className="text-[10px] px-1.5 py-0.5 rounded-full"
+                style={{
+                  background: tab === tb.id ? 'rgba(0,0,0,0.07)' : 'rgba(0,0,0,0.04)',
+                  color: tab === tb.id ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                }}
+              >
                 {tb.count}
               </span>
               {tab === tb.id && (
-                <span className="absolute left-0 right-0 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-violet-400 to-cyan-300" />
+                <span
+                  className="absolute left-0 right-0 -bottom-px h-px rounded-full"
+                  style={{ background: 'var(--accent)' }}
+                />
               )}
             </button>
           ))}
@@ -127,77 +182,131 @@ export function RepoTabs({ owner, repo, meta, commits, prs }: Props) {
         {/* commits */}
         {showCommits && (
           <section>
-            <h2 className="flex items-center gap-2 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
+            <h2
+              className="text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2"
+              style={{ color: 'var(--text-tertiary)' }}
+            >
               <IconGitCommit className="w-3.5 h-3.5" />
               Recent Commits
             </h2>
-            <div className="space-y-px">
+            <div className="space-y-2">
               {commits.map(c => (
-                <a
+                <GlassCard
                   key={c.sha}
                   href={`/${owner}/${repo}/commit/${c.sha}`}
-                  className="glass-panel group flex items-center justify-between gap-4 rounded-2xl px-5 py-4 mb-2 hover:-translate-y-0.5 transition-transform"
+                  className="px-5 py-4"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
-                      <IconGitCommit className="w-3.5 h-3.5 text-zinc-400" />
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: 'rgba(0,0,0,0.05)' }}
+                      >
+                        <IconGitCommit
+                          className="w-3.5 h-3.5"
+                          style={{ color: 'var(--text-secondary)' } as React.CSSProperties}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className="text-sm font-medium truncate"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
+                          {c.message}
+                        </p>
+                        <p
+                          className="text-xs font-mono mt-0.5"
+                          style={{ color: 'var(--text-tertiary)' }}
+                        >
+                          {c.sha.slice(0, 7)} · {c.author} · {new Date(c.date).toLocaleDateString('en-US')}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm text-zinc-200 truncate font-medium">{c.message}</p>
-                      <p className="text-xs text-zinc-600 font-mono mt-0.5">
-                      {c.sha.slice(0, 7)} · {c.author} · {new Date(c.date).toLocaleDateString('en-US')}
-                      </p>
-                    </div>
+                    <IconChevronRight
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: 'var(--text-tertiary)' } as React.CSSProperties}
+                    />
                   </div>
-                  <IconChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
-                </a>
+                </GlassCard>
               ))}
               {commits.length === 0 && (
-                <p className="text-zinc-600 text-sm font-mono py-4">No commits found.</p>
+                <p className="text-sm font-mono py-6" style={{ color: 'var(--text-tertiary)' }}>
+                  No commits found.
+                </p>
               )}
             </div>
           </section>
         )}
 
-        {/* pull requests / merges */}
+        {/* pull requests */}
         {(tab === 'all' || tab === 'prs' || tab === 'merges') && (
           <section>
-            <h2 className="flex items-center gap-2 text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
+            <h2
+              className="text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2"
+              style={{ color: 'var(--text-tertiary)' }}
+            >
               <IconGitPullRequest className="w-3.5 h-3.5" />
               {tab === 'merges' ? 'Merged Pull Requests' : 'Pull Requests'}
             </h2>
-            <div className="space-y-px">
+            <div className="space-y-2">
               {visiblePrs.map(pr => (
-                <a
+                <GlassCard
                   key={pr.number}
                   href={`/${owner}/${repo}/pr/${pr.number}`}
-                  className="glass-panel group flex items-center justify-between gap-4 rounded-2xl px-5 py-4 mb-2 hover:-translate-y-0.5 transition-transform"
+                  className="px-5 py-4"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-white/10 transition-colors">
-                      {pr.merged
-                        ? <IconGitMerge className="w-3.5 h-3.5 text-purple-400" />
-                        : <IconGitPullRequest className="w-3.5 h-3.5 text-zinc-400" />}
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: 'rgba(0,0,0,0.05)' }}
+                      >
+                        {pr.merged
+                          ? <IconGitMerge className="w-3.5 h-3.5" style={{ color: '#8b5cf6' } as React.CSSProperties} />
+                          : <IconGitPullRequest className="w-3.5 h-3.5" style={{ color: 'var(--text-secondary)' } as React.CSSProperties} />
+                        }
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className="text-sm font-medium truncate"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
+                          {pr.title}
+                        </p>
+                        <p
+                          className="text-xs font-mono mt-0.5 flex items-center gap-2"
+                          style={{ color: 'var(--text-tertiary)' }}
+                        >
+                          #{pr.number} · {pr.author} · {timeAgo(pr.date)}
+                          <span
+                            className="px-1.5 py-0.5 rounded-full text-[10px] font-medium"
+                            style={{
+                              background: pr.merged
+                                ? 'rgba(139,92,246,0.1)'
+                                : pr.state === 'open'
+                                  ? 'rgba(34,197,94,0.1)'
+                                  : 'rgba(0,0,0,0.05)',
+                              color: pr.merged
+                                ? '#7c3aed'
+                                : pr.state === 'open'
+                                  ? '#16a34a'
+                                  : 'var(--text-tertiary)',
+                            }}
+                          >
+                            {pr.merged ? 'merged' : pr.state}
+                          </span>
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm text-zinc-200 truncate font-medium">{pr.title}</p>
-                      <p className="text-xs text-zinc-600 font-mono mt-0.5">
-                        #{pr.number} · {pr.author} · {timeAgo(pr.date)}
-                        <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] ${
-                          pr.merged
-                            ? 'bg-purple-500/10 text-purple-400'
-                            : pr.state === 'open'
-                              ? 'bg-emerald-500/10 text-emerald-400'
-                              : 'bg-white/5 text-zinc-500'
-                        }`}>{pr.merged ? 'merged' : pr.state}</span>
-                      </p>
-                    </div>
+                    <IconChevronRight
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: 'var(--text-tertiary)' } as React.CSSProperties}
+                    />
                   </div>
-                  <IconChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-400 flex-shrink-0 transition-colors" />
-                </a>
+                </GlassCard>
               ))}
               {visiblePrs.length === 0 && (
-                <p className="text-zinc-600 text-sm font-mono py-4">
+                <p className="text-sm font-mono py-6" style={{ color: 'var(--text-tertiary)' }}>
                   {tab === 'merges' ? 'No merged pull requests yet.' : 'No pull requests found.'}
                 </p>
               )}

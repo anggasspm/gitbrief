@@ -6,6 +6,7 @@ import { ExplainCard }     from '@/components/ExplainCard'
 import { DiffViewer }      from '@/components/DiffViewer'
 import { BackButton }      from '@/components/BackButton'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { Navbar }          from '@/components/Navbar'
 import { IconExternalLink, IconGitCommit } from '@/components/Icons'
 
 interface CommitData {
@@ -41,11 +42,12 @@ export default function CommitPage() {
 
   return (
     <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
-      {/* floating navbar */}
-      <div className="pt-5 pb-2 sticky top-0 z-20 px-5">
-        <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-4 mx-auto max-w-3xl">
-          <div className="flex items-center gap-2 min-w-0 text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
-            <BackButton />
+      
+      {/* NAVBAR (Tanpa wrapper pembungkus) */}
+      <Navbar
+        left={<BackButton />}
+        breadcrumb={
+          <>
             <span className="mx-1 opacity-30">/</span>
             <a href={`/${owner}/${repo}`} className="hover:underline truncate">{owner}/{repo}</a>
             <span className="mx-0.5 opacity-30">/</span>
@@ -56,19 +58,21 @@ export default function CommitPage() {
               <IconGitCommit className="w-3 h-3" />
               {sha.slice(0, 7)}
             </span>
-          </div>
+          </>
+        }
+        action={
           <a
             href={`https://github.com/${owner}/${repo}/commit/${sha}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs font-medium flex-shrink-0 transition-opacity hover:opacity-70"
-            style={{ color: 'var(--accent)' }}
+            className="flex items-center gap-1.5 text-xs font-medium shrink-0 transition-opacity hover:opacity-70"
+            style={{ color: 'var(--text-primary)' }}
           >
             <IconExternalLink className="w-3 h-3" />
             GitHub
           </a>
-        </nav>
-      </div>
+        }
+      />
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div className="mb-10">

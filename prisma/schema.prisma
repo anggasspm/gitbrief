@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model CommitExplanation {
+  id              String   @id @default(cuid())
+  owner           String
+  repo            String
+  sha             String
+  lang            String   @default("en")
+  summary         String
+  why             String
+  impact          String[]
+  risk            String
+  riskScore       Int
+  breaking        Boolean
+  breakingDetails String?
+  security        String?
+  testing         String
+  changelog       String
+  rawDiff         String   @db.Text
+  createdAt       DateTime @default(now())
+
+  @@unique([owner, repo, sha, lang])
+  @@index([owner, repo])
+}
+
+model PrExplanation {
+  id              String   @id @default(cuid())
+  owner           String
+  repo            String
+  number          Int
+  lang            String   @default("en")
+  title           String
+  summary         String
+  why             String
+  impact          String[]
+  risk            String
+  riskScore       Int
+  breaking        Boolean
+  breakingDetails String?
+  security        String?
+  testing         String
+  changelog       String
+  createdAt       DateTime @default(now())
+
+  @@unique([owner, repo, number, lang])
+  @@index([owner, repo])
+}

@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { notFound, useParams } from 'next/navigation'
-import { ExplainCard } from '@/components/ExplainCard'
-import { DiffViewer }  from '@/components/DiffViewer'
-import { BackButton }  from '@/components/BackButton'
-import { IconExternalLink } from '@/components/Icons'
+import { ExplainCard }     from '@/components/ExplainCard'
+import { DiffViewer }      from '@/components/DiffViewer'
+import { BackButton }      from '@/components/BackButton'
+import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { IconExternalLink, IconGitCommit } from '@/components/Icons'
 
-interface CommitExplanationData {
+interface CommitData {
   summary: string; why: string; impact: string[]
   risk: string; riskScore: number; breaking: boolean
   breakingDetails: string | null; security: string | null
@@ -16,66 +17,70 @@ interface CommitExplanationData {
 }
 
 export default function CommitPage() {
-  const params = useParams<{ owner: string; repo: string; sha: string }>()
-  const { owner, repo, sha } = params
-
-  const [data, setData] = useState<CommitExplanationData | null>(null)
-  const [error, setError] = useState(false)
+  const { owner, repo, sha } = useParams<{ owner: string; repo: string; sha: string }>()
+  const [data,    setData]    = useState<CommitData | null>(null)
+  const [error,   setError]   = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
-    setData(null)
-    setError(false)
-
+    setLoading(true); setData(null); setError(false)
     fetch('/api/explain/commit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: `https://github.com/${owner}/${repo}/commit/${sha}` }),
     })
-      .then(res => res.json())
-      .then(json => {
-        if (cancelled) return
-        if (json.error) { setError(true); return }
-        setData(json)
-      })
+      .then(r => r.json())
+      .then(json => { if (!cancelled) { if (json.error) setError(true); else setData(json) } })
       .catch(() => { if (!cancelled) setError(true) })
       .finally(() => { if (!cancelled) setLoading(false) })
-
     return () => { cancelled = true }
   }, [owner, repo, sha])
 
   if (error) notFound()
 
   return (
-    <main className="min-h-screen">
-      <nav className="glass-nav border-b border-white/5 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto flex items-center gap-2 text-sm flex-wrap">
-          <BackButton />
-        </div>
-      </nav>
-
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        <div className="flex items-start justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-lg font-semibold text-zinc-100 mb-1 font-mono">{sha.slice(0, 7)}</h1>
-            <p className="text-sm text-zinc-500">Commit explanation</p>
+    <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      {/* floating navbar */}
+      <div className="pt-5 pb-2 sticky top-0 z-20 px-5">
+        <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-4 mx-auto max-w-3xl">
+          <div className="flex items-center gap-2 min-w-0 text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
+            <BackButton />
+            <span className="mx-1 opacity-30">/</span>
+            <a href={`/${owner}/${repo}`} className="hover:underline truncate">{owner}/{repo}</a>
+            <span className="mx-0.5 opacity-30">/</span>
+            <span
+              className="font-semibold flex items-center gap-1"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <IconGitCommit className="w-3 h-3" />
+              {sha.slice(0, 7)}
+            </span>
           </div>
           <a
             href={`https://github.com/${owner}/${repo}/commit/${sha}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
+            className="flex items-center gap-1.5 text-xs font-medium flex-shrink-0 transition-opacity hover:opacity-70"
+            style={{ color: 'var(--accent)' }}
           >
             <IconExternalLink className="w-3 h-3" />
-            View on GitHub
+            GitHub
           </a>
+        </nav>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-10">
+        <div className="mb-10">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--text-tertiary)' }}>
+            Commit
+          </p>
+          <h1 className="text-3xl font-semibold font-mono" style={{ color: 'var(--text-primary)' }}>
+            {sha.slice(0, 7)}
+          </h1>
         </div>
 
-        {loading && (
-          <p className="text-zinc-600 text-sm font-mono py-10 text-center">Analyzing changes…</p>
-        )}
+        {loading && <LoadingSkeleton />}
 
         {data && !loading && (
           <>
@@ -86,9 +91,11 @@ export default function CommitPage() {
               testing={data.testing} changelog={data.changelog}
               cached={data.cached}
             />
-
-            <div className="mt-8">
-              <h2 className="text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
+            <div className="mt-12">
+              <h2
+                className="text-xs font-semibold uppercase tracking-widest mb-5"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
                 Diff
               </h2>
               <DiffViewer rawDiff={data.rawDiff} />
@@ -96,8 +103,8 @@ export default function CommitPage() {
           </>
         )}
 
-        <div className="mt-10 pt-6 border-t border-zinc-800/60">
-          <p className="text-zinc-700 text-xs font-mono text-center">
+        <div className="mt-16 pt-6" style={{ borderTop: '1px solid var(--separator)' }}>
+          <p className="text-xs font-mono text-center" style={{ color: 'var(--text-tertiary)' }}>
             gitbrief.dev/{owner}/{repo}/commit/{sha.slice(0, 7)}
           </p>
         </div>

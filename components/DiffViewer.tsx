@@ -4,48 +4,58 @@ import { IconFileText } from './Icons'
 
 interface DiffFile {
   filename: string
-  diff: string
+  diff:     string
 }
 
 export function splitDiffByFile(rawDiff: string): DiffFile[] {
   const files: DiffFile[] = []
   const blocks = rawDiff.split(/(?=^diff --git )/m).filter(Boolean)
-
   for (const block of blocks) {
     const match = block.match(/^diff --git a\/(.+?) b\/(.+?)$/m)
-    const filename = match ? match[2] : 'unknown file'
-    files.push({ filename, diff: block })
+    files.push({ filename: match ? match[2] : 'unknown', diff: block })
   }
-
   return files
 }
 
-type Row =
-  | { id: number; type: 'meta' | 'hunk'; line: string }
-  | { id: number; type: 'add' | 'del' | 'ctx'; line: string }
+type RowType = 'meta' | 'hunk' | 'add' | 'del' | 'ctx'
+interface Row { id: number; type: RowType; line: string }
 
 function parseDiffLines(diff: string): Row[] {
   return diff.split('\n').map((line, i) => {
-    let type: Row['type'] = 'ctx'
+    let type: RowType = 'ctx'
     if (line.startsWith('+++') || line.startsWith('---') || line.startsWith('diff --git') || line.startsWith('index '))
       type = 'meta'
     else if (line.startsWith('@@')) type = 'hunk'
-    else if (line.startsWith('+')) type = 'add'
-    else if (line.startsWith('-')) type = 'del'
-    return { id: i, type, line } as Row
+    else if (line.startsWith('+'))  type = 'add'
+    else if (line.startsWith('-'))  type = 'del'
+    return { id: i, type, line }
   })
 }
 
 function FileDiff({ filename, diff }: DiffFile) {
   const rows = parseDiffLines(diff)
-  let oldLn = 0
-  let newLn = 0
+  let oldLn = 0, newLn = 0
 
   return (
-    <div className="glass-panel rounded-2xl overflow-hidden mb-3">
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/5 bg-white/5">
-        <IconFileText className="w-3.5 h-3.5 text-zinc-500" />
-        <span className="text-xs font-mono text-zinc-400">{filename}</span>
+    <div
+      className="rounded-2xl overflow-hidden mb-3"
+      style={{
+        background: 'rgba(255,255,255,0.72)',
+        border: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+      }}
+    >
+      <div
+        className="flex items-center gap-2 px-4 py-3"
+        style={{
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          background: 'rgba(0,0,0,0.02)',
+        }}
+      >
+        <IconFileText className="w-3.5 h-3.5" style={{ color: 'var(--text-tertiary)' } as React.CSSProperties} />
+        <span className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
+          {filename}
+        </span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-xs font-mono border-collapse">
@@ -55,13 +65,12 @@ function FileDiff({ filename, diff }: DiffFile) {
 
               if (r.type === 'hunk') {
                 const m = r.line.match(/-(\d+)/)
-                if (m) {
-                  oldLn = parseInt(m[1], 10) - 1
-                  newLn = oldLn
-                }
+                if (m) { oldLn = parseInt(m[1], 10) - 1; newLn = oldLn }
                 return (
-                  <tr key={r.id} className="bg-white/5">
-                    <td colSpan={3} className="px-4 py-1.5 text-zinc-500">{r.line}</td>
+                  <tr key={r.id} style={{ background: 'rgba(0,113,227,0.04)' }}>
+                    <td colSpan={3} className="px-4 py-1.5" style={{ color: 'var(--text-secondary)' }}>
+                      {r.line}
+                    </td>
                   </tr>
                 )
               }
@@ -70,21 +79,21 @@ function FileDiff({ filename, diff }: DiffFile) {
               else if (r.type === 'del') oldLn++
               else { oldLn++; newLn++ }
 
-              const bg = r.type === 'add' ? 'bg-emerald-500/10' : r.type === 'del' ? 'bg-red-500/10' : ''
-              const text = r.type === 'add' ? 'text-emerald-300' : r.type === 'del' ? 'text-red-300' : 'text-zinc-400'
-              const marker = r.type === 'add' ? '+' : r.type === 'del' ? '-' : ' '
-              const markerColor = r.type === 'add' ? 'text-emerald-500' : r.type === 'del' ? 'text-red-500' : 'text-zinc-600'
+              const bg   = r.type === 'add' ? 'rgba(34,197,94,0.07)'  : r.type === 'del' ? 'rgba(239,68,68,0.07)'  : 'transparent'
+              const text = r.type === 'add' ? '#15803d'                : r.type === 'del' ? '#b91c1c'               : 'var(--text-primary)'
+              const mark = r.type === 'add' ? '+' : r.type === 'del' ? '-' : ' '
+              const mc   = r.type === 'add' ? '#16a34a'                : r.type === 'del' ? '#dc2626'               : 'var(--text-tertiary)'
 
               return (
-                <tr key={r.id} className={`${bg} hover:bg-white/5`}>
-                  <td className="w-10 px-2 text-right text-zinc-600 select-none border-r border-white/5">
+                <tr key={r.id} style={{ background: bg }}>
+                  <td className="w-10 px-2 text-right select-none" style={{ color: 'var(--text-tertiary)', borderRight: '1px solid rgba(0,0,0,0.05)' }}>
                     {r.type !== 'add' ? oldLn : ''}
                   </td>
-                  <td className="w-10 px-2 text-right text-zinc-600 select-none border-r border-white/5">
+                  <td className="w-10 px-2 text-right select-none" style={{ color: 'var(--text-tertiary)', borderRight: '1px solid rgba(0,0,0,0.05)' }}>
                     {r.type !== 'del' ? newLn : ''}
                   </td>
-                  <td className={`px-3 py-0.5 whitespace-pre ${text}`}>
-                    <span className={`inline-block w-3 ${markerColor}`}>{marker}</span>
+                  <td className="px-3 py-0.5 whitespace-pre" style={{ color: text }}>
+                    <span className="inline-block w-3" style={{ color: mc }}>{mark}</span>
                     {r.line.slice(1)}
                   </td>
                 </tr>
@@ -99,16 +108,11 @@ function FileDiff({ filename, diff }: DiffFile) {
 
 export function DiffViewer({ rawDiff }: { rawDiff: string }) {
   const files = splitDiffByFile(rawDiff)
-
-  if (files.length === 0) {
-    return <p className="text-zinc-600 text-sm font-mono">No diff available.</p>
-  }
-
+  if (files.length === 0)
+    return <p className="text-sm font-mono" style={{ color: 'var(--text-tertiary)' }}>No diff available.</p>
   return (
     <div>
-      {files.map(f => (
-        <FileDiff key={f.filename} filename={f.filename} diff={f.diff} />
-      ))}
+      {files.map(f => <FileDiff key={f.filename} filename={f.filename} diff={f.diff} />)}
     </div>
   )
 }

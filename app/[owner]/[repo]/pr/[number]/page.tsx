@@ -2,89 +2,89 @@
 
 import { useEffect, useState } from 'react'
 import { notFound, useParams } from 'next/navigation'
-import { ExplainCard } from '@/components/ExplainCard'
-import { DiffViewer }  from '@/components/DiffViewer'
-import { BackButton }  from '@/components/BackButton'
+import { ExplainCard }     from '@/components/ExplainCard'
+import { DiffViewer }      from '@/components/DiffViewer'
+import { BackButton }      from '@/components/BackButton'
+import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { IconGitPullRequest, IconExternalLink } from '@/components/Icons'
 
-interface PrExplanationData {
+interface PrData {
   title: string
   summary: string; why: string; impact: string[]
   risk: string; riskScore: number; breaking: boolean
   breakingDetails: string | null; security: string | null
   testing: string; changelog: string
-  cached?: boolean
+  diff?: string; cached?: boolean
 }
 
 export default function PrPage() {
-  const params = useParams<{ owner: string; repo: string; number: string }>()
-  const { owner, repo, number } = params
-
-  const [data, setData] = useState<PrExplanationData | null>(null)
-  const [diff, setDiff] = useState('')
-  const [error, setError] = useState(false)
+  const { owner, repo, number } = useParams<{ owner: string; repo: string; number: string }>()
+  const [data,    setData]    = useState<PrData | null>(null)
+  const [error,   setError]   = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
-    setData(null)
-    setError(false)
-
+    setLoading(true); setData(null); setError(false)
     fetch('/api/explain/pr', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: `https://github.com/${owner}/${repo}/pull/${number}` }),
     })
-      .then(res => res.json())
-      .then(json => {
-        if (cancelled) return
-        if (json.error) { setError(true); return }
-        setData(json)
-        if (json.diff) setDiff(json.diff)
-      })
+      .then(r => r.json())
+      .then(json => { if (!cancelled) { if (json.error) setError(true); else setData(json) } })
       .catch(() => { if (!cancelled) setError(true) })
       .finally(() => { if (!cancelled) setLoading(false) })
-
     return () => { cancelled = true }
   }, [owner, repo, number])
 
   if (error) notFound()
 
   return (
-    <main className="min-h-screen">
-      <nav className="glass-nav border-b border-white/5 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto flex items-center gap-2 text-sm flex-wrap">
-          <BackButton />
-        </div>
-      </nav>
+    <main style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      {/* floating navbar */}
+      <div className="pt-5 pb-2 sticky top-0 z-20 px-5">
+        <nav className="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between gap-4 mx-auto max-w-3xl">
+          <div className="flex items-center gap-2 min-w-0 text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
+            <BackButton />
+            <span className="mx-1 opacity-30">/</span>
+            <a href={`/${owner}/${repo}`} className="hover:underline truncate">{owner}/{repo}</a>
+            <span className="mx-0.5 opacity-30">/</span>
+            <span
+              className="font-semibold flex items-center gap-1.5"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <IconGitPullRequest className="w-3 h-3" />
+              #{number}
+            </span>
+          </div>
+          <a
+            href={`https://github.com/${owner}/${repo}/pull/${number}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-medium flex-shrink-0 transition-opacity hover:opacity-70"
+            style={{ color: 'var(--accent)' }}
+          >
+            <IconExternalLink className="w-3 h-3" />
+            GitHub
+          </a>
+        </nav>
+      </div>
 
       <div className="max-w-3xl mx-auto px-6 py-10">
-        {loading && (
-          <p className="text-zinc-600 text-sm font-mono py-10 text-center">Analyzing changes…</p>
-        )}
+        <div className="mb-10">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--text-tertiary)' }}>
+            Pull Request
+          </p>
+          <h1 className="text-3xl font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
+            {data?.title ?? `#${number}`}
+          </h1>
+        </div>
+
+        {loading && <LoadingSkeleton />}
 
         {data && !loading && (
           <>
-            <div className="flex items-start justify-between gap-4 mb-8">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <IconGitPullRequest className="w-4 h-4 text-zinc-500" />
-                  <h1 className="text-lg font-semibold text-zinc-100">{data.title}</h1>
-                </div>
-                <p className="text-sm text-zinc-500 font-mono">#{number}</p>
-              </div>
-              <a
-                href={`https://github.com/${owner}/${repo}/pull/${number}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors glass-pill rounded-lg px-3 py-2 font-mono whitespace-nowrap"
-              >
-                <IconExternalLink className="w-3 h-3" />
-                View on GitHub
-              </a>
-            </div>
-
             <ExplainCard
               summary={data.summary} why={data.why} impact={data.impact}
               risk={data.risk} riskScore={data.riskScore} breaking={data.breaking}
@@ -92,20 +92,22 @@ export default function PrPage() {
               testing={data.testing} changelog={data.changelog}
               cached={data.cached}
             />
-
-            {diff && (
-              <div className="mt-8">
-                <h2 className="text-xs font-mono font-semibold text-zinc-500 uppercase tracking-widest mb-3">
+            {data.diff && (
+              <div className="mt-12">
+                <h2
+                  className="text-xs font-semibold uppercase tracking-widest mb-5"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
                   Diff
                 </h2>
-                <DiffViewer rawDiff={diff} />
+                <DiffViewer rawDiff={data.diff} />
               </div>
             )}
           </>
         )}
 
-        <div className="mt-10 pt-6 border-t border-zinc-800/60">
-          <p className="text-zinc-700 text-xs font-mono text-center">
+        <div className="mt-16 pt-6" style={{ borderTop: '1px solid var(--separator)' }}>
+          <p className="text-xs font-mono text-center" style={{ color: 'var(--text-tertiary)' }}>
             gitbrief.dev/{owner}/{repo}/pr/{number}
           </p>
         </div>

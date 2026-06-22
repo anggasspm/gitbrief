@@ -5,13 +5,13 @@ import { IconArrowLeft } from './Icons'
 
 export function BackButton() {
   const router = useRouter()
-
   return (
     <button
       onClick={() => router.back()}
-      className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-200 transition-colors text-sm"
+      className="flex items-center gap-1.5 text-xs font-medium transition-colors"
+      style={{ color: 'var(--accent)' }}
     >
-      <IconArrowLeft className="w-3.5 h-3.5" />
+      <IconArrowLeft className="w-3 h-3" />
       Back
     </button>
   )

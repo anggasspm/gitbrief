@@ -1,8 +1,10 @@
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Inter } from 'next/font/google'
 
-export const inter = Inter({ subsets: ['latin'] })
-
-export const spaceGrotesk = Space_Grotesk({
+export const inter = Inter({
   subsets: ['latin'],
-  weight: ['500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600'],
 })
+
+export const spaceGrotesk = inter
